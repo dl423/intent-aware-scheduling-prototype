@@ -1,0 +1,734 @@
+{
+  "human_waiting": {
+    "contract-fifo": {
+      "points": [
+        {
+          "marker_number_in_source": 1,
+          "arrival_utc": "2026-07-12T09:00:00+00:00",
+          "wait_minutes": 0
+        },
+        {
+          "marker_number_in_source": 2,
+          "arrival_utc": "2026-07-12T09:00:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 3,
+          "arrival_utc": "2026-07-12T09:00:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 4,
+          "arrival_utc": "2026-07-12T09:40:00+00:00",
+          "wait_minutes": 40
+        },
+        {
+          "marker_number_in_source": 5,
+          "arrival_utc": "2026-07-12T09:40:00+00:00",
+          "wait_minutes": 70
+        },
+        {
+          "marker_number_in_source": 6,
+          "arrival_utc": "2026-07-12T09:40:00+00:00",
+          "wait_minutes": 70
+        },
+        {
+          "marker_number_in_source": 7,
+          "arrival_utc": "2026-07-12T09:40:00+00:00",
+          "wait_minutes": 70
+        },
+        {
+          "marker_number_in_source": 8,
+          "arrival_utc": "2026-07-12T09:40:00+00:00",
+          "wait_minutes": 80
+        },
+        {
+          "marker_number_in_source": 9,
+          "arrival_utc": "2026-07-12T09:40:00+00:00",
+          "wait_minutes": 80
+        },
+        {
+          "marker_number_in_source": 10,
+          "arrival_utc": "2026-07-12T10:40:00+00:00",
+          "wait_minutes": 80
+        },
+        {
+          "marker_number_in_source": 11,
+          "arrival_utc": "2026-07-12T10:40:00+00:00",
+          "wait_minutes": 110
+        },
+        {
+          "marker_number_in_source": 12,
+          "arrival_utc": "2026-07-12T10:40:00+00:00",
+          "wait_minutes": 110
+        },
+        {
+          "marker_number_in_source": 13,
+          "arrival_utc": "2026-07-12T10:40:00+00:00",
+          "wait_minutes": 110
+        },
+        {
+          "marker_number_in_source": 14,
+          "arrival_utc": "2026-07-12T10:40:00+00:00",
+          "wait_minutes": 120
+        },
+        {
+          "marker_number_in_source": 15,
+          "arrival_utc": "2026-07-12T12:20:00+00:00",
+          "wait_minutes": 80
+        },
+        {
+          "marker_number_in_source": 16,
+          "arrival_utc": "2026-07-12T12:20:00+00:00",
+          "wait_minutes": 110
+        },
+        {
+          "marker_number_in_source": 17,
+          "arrival_utc": "2026-07-12T12:20:00+00:00",
+          "wait_minutes": 110
+        },
+        {
+          "marker_number_in_source": 18,
+          "arrival_utc": "2026-07-12T12:50:00+00:00",
+          "wait_minutes": 120
+        },
+        {
+          "marker_number_in_source": 19,
+          "arrival_utc": "2026-07-12T12:50:00+00:00",
+          "wait_minutes": 150
+        },
+        {
+          "marker_number_in_source": 20,
+          "arrival_utc": "2026-07-12T12:50:00+00:00",
+          "wait_minutes": 150
+        },
+        {
+          "marker_number_in_source": 21,
+          "arrival_utc": "2026-07-12T12:50:00+00:00",
+          "wait_minutes": 150
+        },
+        {
+          "marker_number_in_source": 22,
+          "arrival_utc": "2026-07-12T12:50:00+00:00",
+          "wait_minutes": 160
+        },
+        {
+          "marker_number_in_source": 23,
+          "arrival_utc": "2026-07-12T12:50:00+00:00",
+          "wait_minutes": 160
+        },
+        {
+          "marker_number_in_source": 24,
+          "arrival_utc": "2026-07-12T13:40:00+00:00",
+          "wait_minutes": 180
+        },
+        {
+          "marker_number_in_source": 25,
+          "arrival_utc": "2026-07-12T13:40:00+00:00",
+          "wait_minutes": 210
+        },
+        {
+          "marker_number_in_source": 26,
+          "arrival_utc": "2026-07-12T13:40:00+00:00",
+          "wait_minutes": 210
+        },
+        {
+          "marker_number_in_source": 27,
+          "arrival_utc": "2026-07-12T13:40:00+00:00",
+          "wait_minutes": 210
+        },
+        {
+          "marker_number_in_source": 28,
+          "arrival_utc": "2026-07-12T15:50:00+00:00",
+          "wait_minutes": 150
+        },
+        {
+          "marker_number_in_source": 29,
+          "arrival_utc": "2026-07-12T15:50:00+00:00",
+          "wait_minutes": 180
+        },
+        {
+          "marker_number_in_source": 30,
+          "arrival_utc": "2026-07-12T16:50:00+00:00",
+          "wait_minutes": 160
+        },
+        {
+          "marker_number_in_source": 31,
+          "arrival_utc": "2026-07-12T16:50:00+00:00",
+          "wait_minutes": 190
+        },
+        {
+          "marker_number_in_source": 32,
+          "arrival_utc": "2026-07-12T16:50:00+00:00",
+          "wait_minutes": 190
+        }
+      ],
+      "sorted_wait_minutes": [
+        0,
+        30,
+        30,
+        40,
+        70,
+        70,
+        70,
+        80,
+        80,
+        80,
+        80,
+        110,
+        110,
+        110,
+        110,
+        110,
+        120,
+        120,
+        150,
+        150,
+        150,
+        150,
+        160,
+        160,
+        160,
+        180,
+        180,
+        190,
+        190,
+        210,
+        210,
+        210
+      ],
+      "histogram_wait_minutes": {
+        "0": 1,
+        "30": 2,
+        "40": 1,
+        "70": 3,
+        "80": 4,
+        "110": 5,
+        "120": 2,
+        "150": 4,
+        "160": 3,
+        "180": 2,
+        "190": 2,
+        "210": 3
+      },
+      "p95_zero_based_index": 29,
+      "p95_minutes": 210,
+      "maximum_minutes": 210
+    },
+    "intent-aware": {
+      "points": [
+        {
+          "marker_number_in_source": 1,
+          "arrival_utc": "2026-07-12T09:00:00+00:00",
+          "wait_minutes": 0
+        },
+        {
+          "marker_number_in_source": 2,
+          "arrival_utc": "2026-07-12T09:00:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 3,
+          "arrival_utc": "2026-07-12T09:00:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 4,
+          "arrival_utc": "2026-07-12T09:40:00+00:00",
+          "wait_minutes": 0
+        },
+        {
+          "marker_number_in_source": 5,
+          "arrival_utc": "2026-07-12T09:40:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 6,
+          "arrival_utc": "2026-07-12T09:40:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 7,
+          "arrival_utc": "2026-07-12T09:40:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 8,
+          "arrival_utc": "2026-07-12T09:40:00+00:00",
+          "wait_minutes": 40
+        },
+        {
+          "marker_number_in_source": 9,
+          "arrival_utc": "2026-07-12T09:40:00+00:00",
+          "wait_minutes": 40
+        },
+        {
+          "marker_number_in_source": 10,
+          "arrival_utc": "2026-07-12T10:40:00+00:00",
+          "wait_minutes": 0
+        },
+        {
+          "marker_number_in_source": 11,
+          "arrival_utc": "2026-07-12T10:40:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 12,
+          "arrival_utc": "2026-07-12T10:40:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 13,
+          "arrival_utc": "2026-07-12T10:40:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 14,
+          "arrival_utc": "2026-07-12T10:40:00+00:00",
+          "wait_minutes": 40
+        },
+        {
+          "marker_number_in_source": 15,
+          "arrival_utc": "2026-07-12T12:20:00+00:00",
+          "wait_minutes": 0
+        },
+        {
+          "marker_number_in_source": 16,
+          "arrival_utc": "2026-07-12T12:50:00+00:00",
+          "wait_minutes": 0
+        },
+        {
+          "marker_number_in_source": 17,
+          "arrival_utc": "2026-07-12T12:20:00+00:00",
+          "wait_minutes": 60
+        },
+        {
+          "marker_number_in_source": 18,
+          "arrival_utc": "2026-07-12T12:50:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 19,
+          "arrival_utc": "2026-07-12T12:20:00+00:00",
+          "wait_minutes": 60
+        },
+        {
+          "marker_number_in_source": 20,
+          "arrival_utc": "2026-07-12T12:50:00+00:00",
+          "wait_minutes": 40
+        },
+        {
+          "marker_number_in_source": 21,
+          "arrival_utc": "2026-07-12T12:50:00+00:00",
+          "wait_minutes": 40
+        },
+        {
+          "marker_number_in_source": 22,
+          "arrival_utc": "2026-07-12T12:50:00+00:00",
+          "wait_minutes": 40
+        },
+        {
+          "marker_number_in_source": 23,
+          "arrival_utc": "2026-07-12T13:40:00+00:00",
+          "wait_minutes": 0
+        },
+        {
+          "marker_number_in_source": 24,
+          "arrival_utc": "2026-07-12T13:40:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 25,
+          "arrival_utc": "2026-07-12T12:50:00+00:00",
+          "wait_minutes": 80
+        },
+        {
+          "marker_number_in_source": 26,
+          "arrival_utc": "2026-07-12T13:40:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 27,
+          "arrival_utc": "2026-07-12T13:40:00+00:00",
+          "wait_minutes": 40
+        },
+        {
+          "marker_number_in_source": 28,
+          "arrival_utc": "2026-07-12T15:50:00+00:00",
+          "wait_minutes": 0
+        },
+        {
+          "marker_number_in_source": 29,
+          "arrival_utc": "2026-07-12T15:50:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 30,
+          "arrival_utc": "2026-07-12T16:50:00+00:00",
+          "wait_minutes": 0
+        },
+        {
+          "marker_number_in_source": 31,
+          "arrival_utc": "2026-07-12T16:50:00+00:00",
+          "wait_minutes": 30
+        },
+        {
+          "marker_number_in_source": 32,
+          "arrival_utc": "2026-07-12T16:50:00+00:00",
+          "wait_minutes": 30
+        }
+      ],
+      "sorted_wait_minutes": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        30,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        40,
+        60,
+        60,
+        80
+      ],
+      "histogram_wait_minutes": {
+        "0": 8,
+        "30": 14,
+        "40": 7,
+        "60": 2,
+        "80": 1
+      },
+      "p95_zero_based_index": 29,
+      "p95_minutes": 60,
+      "maximum_minutes": 80
+    }
+  },
+  "patient_completions": {
+    "contract-fifo": [
+      {
+        "completion_utc": "2026-07-12T10:00:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 2
+      },
+      {
+        "completion_utc": "2026-07-12T10:10:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 3
+      },
+      {
+        "completion_utc": "2026-07-12T10:20:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 4
+      },
+      {
+        "completion_utc": "2026-07-12T11:30:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 6
+      },
+      {
+        "completion_utc": "2026-07-12T11:40:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 7
+      },
+      {
+        "completion_utc": "2026-07-12T11:50:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 9
+      },
+      {
+        "completion_utc": "2026-07-12T12:00:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 10
+      },
+      {
+        "completion_utc": "2026-07-12T13:00:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 11
+      },
+      {
+        "completion_utc": "2026-07-12T13:10:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 12
+      },
+      {
+        "completion_utc": "2026-07-12T13:20:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 14
+      },
+      {
+        "completion_utc": "2026-07-12T13:30:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 15
+      },
+      {
+        "completion_utc": "2026-07-12T13:40:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 17
+      },
+      {
+        "completion_utc": "2026-07-12T14:40:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 19
+      },
+      {
+        "completion_utc": "2026-07-12T14:50:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 20
+      },
+      {
+        "completion_utc": "2026-07-12T16:00:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 22
+      },
+      {
+        "completion_utc": "2026-07-12T16:10:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 23
+      },
+      {
+        "completion_utc": "2026-07-12T16:20:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 25
+      },
+      {
+        "completion_utc": "2026-07-12T16:30:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 26
+      },
+      {
+        "completion_utc": "2026-07-12T16:40:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 27
+      },
+      {
+        "completion_utc": "2026-07-12T17:40:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 29
+      },
+      {
+        "completion_utc": "2026-07-12T18:00:00+00:00",
+        "new_completions": 3,
+        "cumulative_completions": 32
+      },
+      {
+        "completion_utc": "2026-07-12T18:20:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 33
+      },
+      {
+        "completion_utc": "2026-07-12T19:10:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 34
+      },
+      {
+        "completion_utc": "2026-07-12T19:20:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 35
+      },
+      {
+        "completion_utc": "2026-07-12T19:30:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 37
+      },
+      {
+        "completion_utc": "2026-07-12T20:30:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 39
+      },
+      {
+        "completion_utc": "2026-07-12T20:40:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 40
+      }
+    ],
+    "intent-aware": [
+      {
+        "completion_utc": "2026-07-13T02:20:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 1
+      },
+      {
+        "completion_utc": "2026-07-13T02:40:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 2
+      },
+      {
+        "completion_utc": "2026-07-13T03:00:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 4
+      },
+      {
+        "completion_utc": "2026-07-13T03:20:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 6
+      },
+      {
+        "completion_utc": "2026-07-13T03:40:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 7
+      },
+      {
+        "completion_utc": "2026-07-13T04:00:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 9
+      },
+      {
+        "completion_utc": "2026-07-13T04:20:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 11
+      },
+      {
+        "completion_utc": "2026-07-13T04:40:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 13
+      },
+      {
+        "completion_utc": "2026-07-13T05:00:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 14
+      },
+      {
+        "completion_utc": "2026-07-13T05:20:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 16
+      },
+      {
+        "completion_utc": "2026-07-13T05:40:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 17
+      },
+      {
+        "completion_utc": "2026-07-13T06:00:00+00:00",
+        "new_completions": 2,
+        "cumulative_completions": 19
+      },
+      {
+        "completion_utc": "2026-07-13T06:10:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 20
+      },
+      {
+        "completion_utc": "2026-07-13T06:20:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 21
+      },
+      {
+        "completion_utc": "2026-07-13T06:30:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 22
+      },
+      {
+        "completion_utc": "2026-07-13T06:50:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 23
+      },
+      {
+        "completion_utc": "2026-07-13T07:00:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 24
+      },
+      {
+        "completion_utc": "2026-07-13T07:10:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 25
+      },
+      {
+        "completion_utc": "2026-07-13T07:20:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 26
+      },
+      {
+        "completion_utc": "2026-07-13T07:30:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 27
+      },
+      {
+        "completion_utc": "2026-07-13T07:40:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 28
+      },
+      {
+        "completion_utc": "2026-07-13T07:50:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 29
+      },
+      {
+        "completion_utc": "2026-07-13T08:00:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 30
+      },
+      {
+        "completion_utc": "2026-07-13T08:10:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 31
+      },
+      {
+        "completion_utc": "2026-07-13T08:30:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 32
+      },
+      {
+        "completion_utc": "2026-07-13T08:40:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 33
+      },
+      {
+        "completion_utc": "2026-07-13T08:50:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 34
+      },
+      {
+        "completion_utc": "2026-07-13T09:00:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 35
+      },
+      {
+        "completion_utc": "2026-07-13T09:20:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 36
+      },
+      {
+        "completion_utc": "2026-07-13T09:30:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 37
+      },
+      {
+        "completion_utc": "2026-07-13T09:40:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 38
+      },
+      {
+        "completion_utc": "2026-07-13T09:50:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 39
+      },
+      {
+        "completion_utc": "2026-07-13T10:00:00+00:00",
+        "new_completions": 1,
+        "cumulative_completions": 40
+      }
+    ]
+  },
+  "description": "Expected Figure 4 values decoded from rounded plot coordinates and snapped to the ten-minute simulation grid. This is a reference fixture, not independent experimental evidence."
+}
