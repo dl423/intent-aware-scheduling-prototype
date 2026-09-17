@@ -50,3 +50,7 @@ The tests use mock or stub providers. The separate `validate-real` command makes
 ## Scope
 
 Queues are in process; SQLite records are not used to restore queued tasks after restart. There is no durable multi-step workflow or resumable human checkpoint protocol. The policy's quality settings are not calibrated quality guarantees. This repository contains the paper prototype only.
+
+## License
+
+This project is released under the [MIT License](LICENSE).

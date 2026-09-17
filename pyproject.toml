@@ -3,6 +3,8 @@ name = "intent-aware-scheduler"
 version = "0.1.0"
 description = "Intent-aware scheduling gateway prototype for agentic LLM workloads"
 readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
 requires-python = ">=3.11"
 dependencies = [
   "fastapi>=0.116",

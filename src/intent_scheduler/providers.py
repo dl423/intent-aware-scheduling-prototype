@@ -198,7 +198,6 @@ class OpenAIProvider:
                 from dotenv import load_dotenv
 
                 project_dir = Path(__file__).resolve().parents[2]
-                load_dotenv(project_dir.parent / ".env", override=False)
                 load_dotenv(project_dir / ".env", override=False)
             except ImportError:
                 pass
