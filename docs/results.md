@@ -1,22 +1,40 @@
-# Reading generated results
+# Reading the Results
 
-Run `uv run python experiments/reproduce.py` from the repository root. The exporter preserves a new run under `results/` and prints its location.
+Run the reproduction script from the repository root.
 
-| File | Meaning |
+```bash
+uv run python experiments/reproduce.py
+```
+
+The script saves each run in a new timestamped directory under `results/` and prints its location. Start with `report.txt` or `report.html` for the comparison and `checks.md` for verification outcomes.
+
+## Saved Files
+
+`<mode>` is `static`, `contract-fifo`, or `intent-aware`.
+
+| File | Contents |
 |---|---|
-| `report.txt`, `report.html` | Summary for all three modes |
-| `checks.json`, `checks.md` | Explicit comparisons and pass/fail outcomes |
-| `manifest.json` | Public repository revision, source and fixture hashes, configuration, and run timestamps |
-| `workload.json` | The 72 synthetic requests and their supplied contracts |
-| `<mode>/tasks.md` | Per-task start, completion, deadline, wait, and modeled cost |
-| `<mode>/trace.md` | Allocated slots and ready queues at ten-minute ticks |
-| `<mode>/sim-NNN.json` | Task decisions, transitions, mock responses, and outcome |
-| `<mode>/table-derivation.json` | Counts, sorted waits, percentile index, and cost sum |
-| `<mode>/outcomes.json`, `traces.json` | Full machine-readable outcomes and traces |
-| `<mode>/provider-calls.json`, `accounting.json` | Mock calls and accounting totals |
+| `report.txt`, `report.html` | Summary for all three configurations |
+| `checks.json`, `checks.md` | Comparisons and pass or fail results |
+| `manifest.json` | Repository revision, source and reference hashes, experiment configuration, and run timestamps |
+| `workload.json` | The 72 requests and their explicit contracts |
+| `<mode>/tasks.md` | Task submission, start, completion, deadline, queue wait, and modeled cost |
+| `<mode>/trace.md` | Reserved slots and ready-task counts at ten-minute ticks |
+| `<mode>/sim-NNN.json` | One task's decisions, transitions, mock responses, and outcome |
+| `<mode>/table-derivation.json` | Counts, sorted waits, percentile index, and cost sum for the results table |
+| `<mode>/outcomes.json`, `<mode>/traces.json` | Complete task outcomes and queue traces |
+| `<mode>/provider-calls.json`, `<mode>/accounting.json` | Mock calls and accounting totals |
 
-D1 and D2 are fixed simulated dates, July 12 and 13, 2026. Database event timestamps and run timestamps use real execution time. Do not subtract timestamps from different clocks.
+## Timing and Cost
 
-Queue wait is start minus submission. Completion on the deadline counts as meeting it. Human-waiting p95 selects index `round((n-1)*0.95)` from sorted waits. For 32 human-waiting tasks this is the 30th value. Modeled execution costs use policy estimates; mock call accounting includes extraction and judging overhead and is a separate quantity.
+Task times use the simulated clock. D1 and D2 denote July 12 and July 13, 2026. Database events and run timestamps use actual execution time, so they cannot be subtracted from simulated timestamps to calculate task durations.
 
-The bundled reference fixtures contain table values and decoded Figure 4 coordinates snapped to the ten-minute grid. They omit private manuscript text and historical logs. Comparisons establish reproduction of this deterministic case, not general scheduling superiority. Generated outputs are local and gitignored; inspect them before choosing to distribute any run.
+Queue wait runs from submission to execution start. Completion on or before the deadline counts as meeting it. To calculate human-waiting p95, the script sorts the waits of the `n` tasks whose requesters are designated as waiting and selects zero-based index `round((n-1)*0.95)`. For 32 tasks, this is the 30th value.
+
+The results table sums policy estimates of execution cost. Mock accounting totals the calls made during the run, including extraction and judging overhead. These are separate cost measures.
+
+## Reproduction Checks
+
+The script checks completion of all 72 tasks per configuration, slot allocation, FIFO ordering, and matching execution choices between the contract-based configurations. It also compares results with the bundled table values and decoded Figure 4 coordinates, rounded to the ten-minute grid. The reference files contain numerical values without manuscript text or historical logs.
+
+Passing these checks establishes reproduction of this case, without independently validating its assumptions or demonstrating general scheduling superiority. Generated outputs are excluded from Git. Review their contents before distributing a run.

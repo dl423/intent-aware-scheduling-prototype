@@ -1,8 +1,9 @@
-"""Run the existing default simulation and preserve its evidence for inspection.
+"""Run the default experiment, save its records, and check reference values.
 
-Uses the same workload and sequential simulate_pipeline calls as collect_case_study.
-A temporary Gateway subclass only copies records and responses before cleanup.
-No scheduling, policy, execution, or simulated-time rules are changed.
+The exporter uses the same workload and sequence of simulation calls as
+collect_case_study. A temporary Gateway subclass captures task records and
+provider responses before the in-memory store closes. It leaves the policy,
+scheduling, execution, and simulated-clock behavior unchanged.
 """
 from __future__ import annotations
 

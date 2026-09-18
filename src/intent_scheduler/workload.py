@@ -38,9 +38,10 @@ PERSONA_TEXT = {
 
 DEFAULT_BURSTS = 8
 
-# Minutes since 09:00, interactive collaborators, patient drafts. Each burst
-# also contains one urgent executive and one overnight researcher. The fixed
-# profile has busier stretches and recovery gaps without random arrivals.
+# Each row gives the arrival time in minutes after 09:00 and the numbers of
+# interactive collaborators and patient drafts. Every burst also includes
+# one urgent executive and one overnight researcher. Varying the burst size
+# and spacing creates busy periods and recovery gaps without random arrivals.
 BURST_PROFILE = (
     (0, 2, 3),
     (40, 5, 5),
@@ -54,12 +55,14 @@ BURST_PROFILE = (
 
 
 def generate_workload(bursts: int = DEFAULT_BURSTS) -> list[WorkloadItem]:
-    """Generate one deterministic mixed workload with genuine queue contention.
+    """Generate a fixed mix of tasks that compete for execution capacity.
 
-    The default eight uneven bursts preserve 32 human-waiting and 40 patient
-    tasks, but vary their spacing and mix. Deadlines and service assumptions
-    are unchanged. Smaller runs use a prefix of the profile, and longer runs
-    repeat it every ten hours. Only the default profile is reported in the paper.
+    The default workload contains 32 human-waiting tasks and 40 patient tasks
+    in eight bursts of different sizes and intervals. Smaller runs use the
+    first bursts of this profile, and longer runs repeat it every ten hours.
+    Relative deadlines follow the same rules for all run sizes, and changing
+    the number of bursts does not change the service-duration assumptions.
+    The paper reports only the default eight-burst workload.
     """
 
     if bursts < 1:

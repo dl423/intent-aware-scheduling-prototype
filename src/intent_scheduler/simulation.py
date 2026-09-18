@@ -1,4 +1,4 @@
-"""Deterministic case-study evaluation through the real gateway pipeline."""
+"""Run the gateway on a fixed workload with a simulated clock and mock provider."""
 
 from __future__ import annotations
 
@@ -42,9 +42,9 @@ CONTRACT_FIFO = "contract-fifo"
 INTENT_AWARE = "intent-aware"
 RUN_MODES = (STATIC, CONTRACT_FIFO, INTENT_AWARE)
 
-# Explicit service-time assumptions for the compressed clock. They represent
-# one sequential provider-call stage and are applied identically to the
-# intent-aware and baseline runs. Parallel drafts form one critical-path stage.
+# Assumed duration of one provider-call stage, before adjustment for reasoning
+# effort. All configurations use these values. Drafts generated in parallel
+# share one stage because their durations overlap.
 ASSUMED_MODEL_STAGE_HOURS = {
     LUNA_MODEL: 0.12,
     TERRA_MODEL: 0.25,
@@ -145,7 +145,7 @@ class ContractFifoPolicy:
 
 
 def assumed_service_duration(result: ExecutionResult) -> timedelta:
-    """Translate machine-completion calls into assumed critical-path time."""
+    """Calculate simulated service duration from task and candidate-selection calls."""
     effort = ASSUMED_EFFORT_MULTIPLIER[result.metrics.reasoning_effort]
     task_stage = ASSUMED_MODEL_STAGE_HOURS[result.metrics.model] * effort
     if result.metrics.template == ExecutionTemplate.SELF_CHECK.value:

@@ -1,24 +1,42 @@
-# Architecture and experiment assumptions
+# Architecture and Experiment Assumptions
+
+The gateway receives requests, selects execution settings, and schedules tasks. The experiment runs each configuration separately with its own gateway and simulated clock, using the same fixed workload.
 
 ```mermaid
 flowchart TD
-    CLI[CLI demo] --> Simulation[Simulation and fixed workload]
-    Simulation --> Gateway[Gateway]
-    Gateway --> Intent[Intent extraction and explicit-field precedence]
-    Intent --> Policy[Policy and admission]
-    Policy --> Queue[Scheduler queues]
-    Queue --> Execution[Execution templates and mock provider]
-    Execution --> Results[Completion records and metrics]
+    CLI[Command-line demo] --> Simulation[Fixed workload and simulated clock]
+    Simulation --> Gateway[Receive task requests]
+    Gateway --> Intent[Form task contracts]
+    Intent --> Policy[Choose controls and check cost caps]
+    Policy --> Queue[Schedule tasks]
+    Queue --> Execution[Execute through the mock provider]
+    Execution --> Results[Record outcomes and measurements]
 ```
 
-The CLI is registered in [pyproject.toml](../pyproject.toml) and implemented in [cli.py](../src/intent_scheduler/cli.py). [simulation.py](../src/intent_scheduler/simulation.py) runs the three configurations sequentially with separate gateways and simulated clocks. They receive the same [workload](../src/intent_scheduler/workload.py).
+[cli.py](../src/intent_scheduler/cli.py), registered in [pyproject.toml](../pyproject.toml), starts [simulation.py](../src/intent_scheduler/simulation.py). The simulation runs the three configurations sequentially on the tasks in [workload.py](../src/intent_scheduler/workload.py).
 
-The experiment supplies explicit contracts. The extraction path still calls the mock provider, but explicit fields take precedence. It does not measure natural-language extraction accuracy. Policy chooses model, effort, template, priority, eligibility time, and an estimated cost. Admission rejects work whose estimated execution cost exceeds the cap.
+## From Request to Execution
 
-Static uses uniform Terra medium-effort self-checking with immediate FIFO. Contract-FIFO selects execution from each contract and retains immediate FIFO. Intent-aware uses the same execution choices and adds priority classes, earliest-deadline-first ordering within a class, deferral, and deadline escalation. The experiment uses three call-capacity slots with zero class reservations. Three parallel drafts reserve three slots; sequential self-checking reserves one.
+A task contract records requirements for quality, completion time, cost, and attention. The gateway can extract them from request text, with explicitly supplied fields taking precedence. The experiment supplies all contract fields explicitly.
 
-The 72 tasks arrive in eight fixed bursts between 09:00 and 16:50 UTC. Service duration depends on configured model and effort, rounded by ten-minute simulation ticks. Parallel drafts form one concurrent stage; candidate selection adds time. Extraction and post-completion quality judging contribute accounting overhead but not simulated service duration. Peak slot demand is held for the whole task interval.
+The policy selects a model, reasoning effort, and execution template. A template specifies how calls are combined, such as generating one response, checking it in a second call, or generating parallel drafts and selecting one. The policy also assigns a priority class and earliest start time. Admission checks reject tasks whose estimated execution cost exceeds their cap.
 
-Patient work can be deferred to 02:00 the next day if the deadline leaves enough margin. Deferred work is restricted by a load threshold and can be promoted as its deadline approaches. Idle capacity during deliberate deferral is expected. No randomness or real-provider latency is modeled.
+## The Three Configurations
 
-Model identifiers and prices are configured experiment assumptions, not statements about current commercial availability. Modeled execution cost uses estimated token counts; it differs from mock-provider accounting. See [results](results.md).
+The static reference uses Terra with medium reasoning effort and a self-check for every task. Tasks become eligible on arrival and are served in first-in, first-out (FIFO) order. Contract-FIFO selects execution settings from each contract while retaining this scheduling behavior.
+
+Intent-aware scheduling uses the same execution choices as contract-FIFO in this experiment. It schedules by priority class and serves earlier deadlines first within each class. It can defer patient tasks to a period of lower load and raise their priority as deadlines approach.
+
+## Capacity and Timing
+
+The 72 tasks arrive in eight fixed bursts between 09:00 and 16:50 UTC. The gateway has three provider-call slots, with none reserved for individual priority classes. Three parallel drafts reserve all three slots, while a response followed by a self-check uses one because the calls are sequential. Each task retains its peak slot requirement until completion.
+
+Service duration depends on the model and reasoning effort. The execution template determines how call durations combine. Parallel drafts occupy one concurrent stage, followed by candidate selection. Completion is recorded at the first ten-minute clock tick when the assumed duration has elapsed. Extraction and final quality judging contribute to mock accounting but not simulated duration.
+
+Patient tasks can be deferred to 02:00 the following day if enough deadline margin remains. Dispatch then depends on the load threshold and available capacity. Deadline-based promotion can make tasks eligible earlier. Capacity may remain idle while the gateway waits for the planned low-load window.
+
+## Modeling Assumptions
+
+The experiment includes no random variation or measured real-provider latency. Model identifiers and prices are fixed assumptions rather than claims about current commercial availability. It does not measure extraction accuracy.
+
+Reported execution costs use estimated token counts and configured prices. Mock accounting instead records the calls made during execution. The [results guide](results.md) explains these measurements.

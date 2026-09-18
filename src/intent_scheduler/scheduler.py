@@ -1,7 +1,7 @@
-"""Deterministic intent-aware scheduler.
+"""Queue tasks according to their contracts and policy decisions.
 
-The scheduler deliberately knows nothing about prompts or providers. It turns a
-task-level contract and policy decision into predictable queue transitions.
+The scheduler manages priority classes, start eligibility, and capacity. Prompt
+construction and provider calls are handled by other gateway components.
 """
 
 from __future__ import annotations
@@ -56,7 +56,7 @@ def _updated(model: Any, **changes: Any) -> Any:
 
 @dataclass
 class ScheduledTask:
-    """Queue envelope shared by the API, executor, and simulator."""
+    """A task's contract, policy decision, and scheduling state."""
 
     task_id: str
     contract: Any
@@ -110,11 +110,12 @@ class CostBudgetExceeded(ValueError):
 
 
 class Scheduler:
-    """Class queues with EDF ordering, reservations, and dynamic promotion.
+    """Schedule tasks by priority class and, by default, earliest deadline.
 
-    Reservations are work-conserving minimum shares. An idle class lends its
-    slots to other work, while a ready class is guaranteed its reservation at
-    the next dispatch opportunity. Running calls are not preempted.
+    Class reservations protect slots for classes with eligible queued work.
+    When a class has no eligible tasks, other classes can use those slots.
+    Running calls are not preempted, so reservations affect subsequent
+    dispatches. Queued tasks can move to a higher class as deadlines approach.
     """
 
     def __init__(

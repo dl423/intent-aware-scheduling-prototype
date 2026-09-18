@@ -1,13 +1,21 @@
-# Optional REST service
+# REST Service
 
-The paper experiment runs without this service. For local API exploration:
+The optional REST service supports API use separately from the paper experiment. Start it from the repository root.
 
 ```bash
 uv run intent-scheduler serve
 ```
 
-Mock mode is the default. Open `http://127.0.0.1:8000/docs` for request schemas. The API supports task submission and inspection, queued-task cancellation, deadline changes, and nudges. SQLite defaults to `scheduler.db`; queues are not restored after restart.
+Mock mode is the default. The [local API documentation](http://127.0.0.1:8000/docs) provides schemas for submitting and inspecting tasks, cancelling queued work, updating deadlines, and nudging a task to indicate that its requester is waiting.
 
-The standalone repository loads only its own `.env` file. Process environment variables take precedence. `.env.example` contains empty credential placeholders. Never commit a populated environment file or service database.
+SQLite stores task records in `scheduler.db` by default. Queues remain in memory and are not restored after restart.
 
-Real-provider mode is optional and incurs provider charges. Configure `OPENAI_API_KEY` and `INTENT_SCHEDULER_PROVIDER=openai` only when intentionally using it. Role model names and fallback names can be set through the `INTENT_SCHEDULER_INTENT_*`, `INTENT_SCHEDULER_CANDIDATE_*`, and `INTENT_SCHEDULER_JUDGE_*` settings shown in [config.py](../src/intent_scheduler/config.py). Task model choices and cost assumptions are configured in the implementation. Verify those settings against your provider before real use. The separate `validate-real` command also makes paid calls; it is not part of the reproduction instructions.
+## Configuration
+
+The service loads this repository's `.env` file, with process environment variables taking precedence. The [example file](../.env.example) contains empty credential placeholders. Keep credentials and service databases out of version control.
+
+## Real-Provider Mode
+
+Configure `OPENAI_API_KEY` and set `INTENT_SCHEDULER_PROVIDER=openai` to enable paid provider calls. Models and fallbacks for intent extraction, candidate selection, and quality judging use the respective `INTENT_SCHEDULER_INTENT_*`, `INTENT_SCHEDULER_CANDIDATE_*`, and `INTENT_SCHEDULER_JUDGE_*` settings in [config.py](../src/intent_scheduler/config.py).
+
+Task execution models and cost assumptions are defined in the implementation. Check them against the provider before use. The separate `validate-real` command also makes paid calls. Neither real-provider mode nor `validate-real` is needed for reproduction.

@@ -1,8 +1,8 @@
-"""Shared, provider-independent contracts for the scheduling gateway.
+"""Data models for task requirements and gateway decisions.
 
-The models in this module deliberately describe task-level intent and policy
-outputs.  Provider request objects belong in the adapter layer.  Keeping that
-boundary explicit prevents static API knobs from becoming the contract.
+Task contracts describe what the requester needs, while decision records
+specify the settings chosen by the policy. Both are independent of provider
+request formats, which are handled by the provider adapters.
 """
 
 from __future__ import annotations
@@ -60,12 +60,12 @@ class ContractProvenance(BaseModel):
 
 
 class TaskContract(BaseModel):
-    """Normalized four-dimensional contract consumed by deterministic policy.
+    """Task requirements for quality, latency, cost, and attention.
 
-    ``interactive`` is a latency interpretation of the deadline dimension,
-    rather than a fifth intent dimension.  Interactive contracts still carry
-    a concrete deadline so that EDF ordering and attainment metrics remain
-    well defined.
+    ``interactive`` indicates that a person is waiting for the result. It
+    refines the latency requirement rather than adding another dimension.
+    Every contract also has a deadline, which allows the scheduler to order
+    tasks by deadline and the experiment to measure deadline attainment.
     """
 
     model_config = ConfigDict(extra="forbid")
@@ -154,7 +154,7 @@ class WorkEstimate(BaseModel):
 
 
 class DecisionRecord(BaseModel):
-    """Auditable result of translating a contract into purchasable knobs."""
+    """Execution and scheduling settings selected for a task contract."""
 
     model_config = ConfigDict(extra="forbid")
 

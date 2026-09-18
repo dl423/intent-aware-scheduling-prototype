@@ -1,43 +1,49 @@
 # Intent-Aware Scheduling Prototype
 
-A single-node research prototype that maps task requirements over quality, deadline, cost, and attention into execution choices and scheduling decisions. The deterministic case study compares static execution and FIFO scheduling, contract-selected execution with FIFO, and contract-selected execution with intent-aware scheduling.
+This companion prototype illustrates how task requirements for quality, deadline, cost, and interruption tolerance can guide execution and scheduling on a single node.
+
+The experiment compares three configurations on the same synthetic workload. The static reference gives every task the same execution settings and serves tasks in first-in, first-out (FIFO) order. Contract-FIFO varies execution settings according to task requirements while retaining FIFO scheduling. Intent-aware scheduling uses those same settings and also prioritizes or defers tasks according to their requirements.
 
 ## Quickstart
 
-Python 3.11 or newer and uv are required. Run from this repository's root.
+With Python 3.11 or newer and uv installed, run these commands from the repository root.
 
 ```bash
 uv sync --extra dev
 uv run intent-scheduler demo --bursts 8
 ```
 
-The experiment uses a deterministic mock provider. It needs no API key and makes no external provider calls. Installing dependencies may require network access.
+The deterministic mock provider requires no API key and makes no external calls. Dependency installation may require network access.
 
-To save per-task records, traces, and a checked report:
+To save and check the results, run the reproduction script.
 
 ```bash
 uv run python experiments/reproduce.py
 ```
 
-Outputs go into a new timestamped directory under `results/`, which is gitignored. The exporter checks all 72 outcomes per mode, capacity accounting, FIFO ordering, equivalent contract-based execution choices, and agreement with the bundled table and figure reference values. It exits unsuccessfully if any check fails. The fixtures are expected values, not independent validation of the model.
+The script saves reports, task records, and queue traces in a timestamped directory under `results/`, which is excluded from Git. It checks the run against the bundled table and figure values and exits with an error if any check fails. The [results guide](docs/results.md) explains the files and checks.
 
-## Expected results
+## Expected Results
 
-| Mode | Critical deadlines | All deadlines | Human-waiting p95 queue wait | Modeled execution cost |
+Queue wait is the time from submission to execution start. The table reports its 95th percentile for tasks whose contracts specify that a person is waiting. Completion on the deadline counts as meeting it.
+
+| Configuration | Critical deadlines met | All deadlines met | Human-waiting p95 queue wait | Modeled execution cost |
 |---|---|---|---|---|
 | Static | 1/8 | 52/72 | 3.83 h | $1.8720 |
 | Contract-FIFO | 1/8 | 56/72 | 3.50 h | $1.0816 |
 | Intent-aware | 8/8 | 72/72 | 1.00 h | $1.0816 |
 
-All 40 patient tasks meet their deadlines in each mode. Intent-aware scheduling increases their p95 queue wait from 4.00 to 19.33 hours relative to contract-FIFO. These are results for a fixed synthetic workload with assumed service durations and configured costs. They do not establish real-provider performance, delivered quality, extraction accuracy, or requester experience.
+Intent-aware scheduling reduces waits for human-waiting tasks by delaying patient tasks. All 40 patient tasks meet their deadlines in every configuration, although their p95 queue wait rises from 4.00 hours under contract-FIFO to 19.33 hours under intent-aware scheduling.
 
-## Navigation
+These results use a fixed synthetic workload with assumed service durations and prices. They do not establish real-provider performance, delivered quality, extraction accuracy, or requester experience.
+
+## Documentation
 
 - [Architecture and experiment assumptions](docs/architecture.md)
-- [Reading generated results](docs/results.md)
-- [Optional service usage](docs/service.md)
-- [Implementation](src/intent_scheduler/) and [tests](tests/)
-- [Expected table values](experiments/expected/table.json) and [figure values](experiments/expected/figure.json)
+- [Reading the results](docs/results.md)
+- [REST service and provider configuration](docs/service.md)
+- [Source code](src/intent_scheduler/) and [tests](tests/)
+- [Reference table values](experiments/expected/table.json) and [figure values](experiments/expected/figure.json)
 
 ## Tests
 
@@ -45,12 +51,12 @@ All 40 patient tasks meet their deadlines in each mode. Intent-aware scheduling 
 uv run pytest
 ```
 
-The tests use mock or stub providers. The separate `validate-real` command makes paid provider calls and is not required to reproduce the experiment.
+Tests use mock or stub providers. The optional `validate-real` command makes paid calls and is not required for reproduction.
 
 ## Scope
 
-Queues are in process; SQLite records are not used to restore queued tasks after restart. There is no durable multi-step workflow or resumable human checkpoint protocol. The policy's quality settings are not calibrated quality guarantees. This repository contains the paper prototype only.
+This repository contains the paper prototype only. Queues are held in memory and are not restored from SQLite records after restart. The prototype does not provide durable workflows spanning multiple steps or a protocol for pausing and resuming tasks around human input. Quality settings select execution policies rather than guarantee measured result quality.
 
 ## License
 
-This project is released under the [MIT License](LICENSE).
+Released under the [MIT License](LICENSE).

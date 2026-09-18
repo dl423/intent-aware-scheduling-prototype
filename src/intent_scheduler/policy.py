@@ -1,10 +1,9 @@
-"""Deterministic intent-to-actuator policy and cost admission helpers.
+"""Select execution and scheduling settings from task requirements.
 
-The quality table is intentionally data, not an opaque scoring function.  It
-is the inspectable contract decomposition at the semantic-transparency
-boundary.  Load handling changes execution structure or reasoning effort
-before model capability, so incidental congestion does not silently violate a
-declared quality floor.
+The quality table specifies the model tier, reasoning effort, and execution
+structure for each requested quality level. Keeping these choices in a table
+makes the policy easy to inspect. Under high load, the policy can reduce
+parallel work or reasoning effort while retaining the selected model tier.
 """
 
 from __future__ import annotations
@@ -139,11 +138,12 @@ def _priority(contract: TaskContract, fleet: FleetState) -> PriorityClass:
 def _degrade_for_load(
     base: QualityPolicy, contract: TaskContract, fleet: FleetState
 ) -> tuple[QualityPolicy, list[str]]:
-    """Apply the explicit congestion degradation path.
+    """Adjust execution settings for patient tasks when load is high.
 
-    Interactive tasks are protected because congestion is precisely when their
-    human-waiting signal matters most. For patient work, verification breadth
-    is reduced before reasoning effort. Model tier is never silently lowered.
+    Interactive tasks retain their settings because their requesters are
+    waiting. For patient tasks, the quality level determines whether the
+    policy reduces parallel drafts or reasoning effort. The model tier stays
+    the same.
     """
 
     if fleet.load_fraction < HIGH_LOAD_FRACTION or contract.interactive:
@@ -180,8 +180,8 @@ class PolicyEngine:
         selected, notes = _degrade_for_load(base, contract, fleet)
         ask_policy = ASK_POLICY_TABLE[contract.attention_profile]
 
-        # Attention is a requester-supplied resource. If none is available,
-        # machine verification substitutes for human review and is costed.
+        # When interruptions are prohibited, add a self-check to a single-pass
+        # task and include the extra call in its estimated execution cost.
         if (
             contract.attention_profile is AttentionProfile.DO_NOT_INTERRUPT
             and selected.execution_template is ExecutionTemplate.SINGLE_PASS
