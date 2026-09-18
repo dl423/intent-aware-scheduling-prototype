@@ -19,8 +19,8 @@ from typing import Any, Mapping, Protocol
 TERRA_MODEL = "gpt-5.6-terra"
 LUNA_MODEL = "gpt-5.6-luna"
 
-# Public list prices in USD per million input/output tokens. Environment
-# overrides allow billing changes to be adopted without a code release.
+# Fixed experiment rates in USD per million input/output tokens. Environment
+# overrides affect real-provider accounting only, not policy estimates.
 DEFAULT_PRICE_PER_MILLION: dict[str, tuple[float, float]] = {
     TERRA_MODEL: (2.5, 15.0),
     LUNA_MODEL: (1.0, 6.0),
@@ -99,15 +99,14 @@ class MockProvider:
         schema_name: str = "response",
         role: str = "task_execution",
     ) -> ProviderResponse:
-        self.calls.append(
-            {
-                "prompt": prompt,
-                "model": model,
-                "reasoning_effort": reasoning_effort,
-                "schema_name": schema_name if json_schema else None,
-                "role": role,
-            }
-        )
+        call_record = {
+            "prompt": prompt,
+            "model": model,
+            "reasoning_effort": reasoning_effort,
+            "schema_name": schema_name if json_schema else None,
+            "role": role,
+        }
+        self.calls.append(call_record)
         if self.latency_seconds:
             await asyncio.sleep(self.latency_seconds)
 
@@ -127,7 +126,7 @@ class MockProvider:
         output_tokens = _estimate_tokens(text)
         rates = self.fixed_rates or self.price_per_million.get(model, (0.0, 0.0))
         cost = (input_tokens * rates[0] + output_tokens * rates[1]) / 1_000_000
-        self.calls[-1].update(
+        call_record.update(
             input_tokens=input_tokens,
             output_tokens=output_tokens,
             cost_usd=cost,
@@ -275,7 +274,7 @@ def _estimate_tokens(text: str) -> int:
 
 
 def _prices_from_env() -> dict[str, tuple[float, float]]:
-    """Load optional pricing without baking unverified prices into the code."""
+    """Override the assumed rates for optional real-provider accounting."""
 
     result = dict(DEFAULT_PRICE_PER_MILLION)
     for model, prefix in ((TERRA_MODEL, "TERRA"), (LUNA_MODEL, "LUNA")):

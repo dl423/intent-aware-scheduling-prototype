@@ -137,7 +137,7 @@ Check factual consistency, omissions, and instruction following. Return only
 the final answer.
 
 ORIGINAL GOAL:
-{request_text}
+{base_prompt}
 
 CANDIDATE:
 {first.text}"""
@@ -156,7 +156,13 @@ CANDIDATE:
                 )
                 for index in range(parallel_drafts)
             ]
-            drafts = list(await asyncio.gather(*draft_calls))
+            # Wait for every draft even when one fails. Releasing the task's
+            # capacity while sibling calls still run would exceed the limit.
+            draft_results = await asyncio.gather(*draft_calls, return_exceptions=True)
+            for result in draft_results:
+                if isinstance(result, BaseException):
+                    raise result
+            drafts = list(draft_results)
             responses.extend(drafts)
             selection, selection_responses, fallback = await self._structured_call(
                 prompt=_candidate_prompt(request_text, [draft.text for draft in drafts]),

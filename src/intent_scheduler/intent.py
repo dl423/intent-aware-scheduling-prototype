@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from typing import Any, Mapping
+from typing import Any, Literal, Mapping
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
+from .models import AttentionProfile, QualityFloor
 from .providers import LUNA_MODEL, TERRA_MODEL, ProviderAdapter, ProviderResponse
 
 
@@ -44,11 +45,11 @@ class ParsedIntent(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    quality_floor: str | None = None
-    deadline_mode: str
+    quality_floor: QualityFloor | None = None
+    deadline_mode: Literal["interactive", "absolute", "unspecified"]
     deadline_at: datetime | None = None
     cost_cap_usd: float | None = Field(default=None, ge=0)
-    attention_profile: str | None = None
+    attention_profile: AttentionProfile | None = None
 
 
 class IntentExtractor:

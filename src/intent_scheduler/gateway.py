@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import asyncio
-from datetime import datetime, timedelta
+from copy import copy
+from datetime import datetime, timedelta, timezone
 from typing import Any
 from uuid import uuid4
 
@@ -20,6 +21,7 @@ from .store import TaskStore
 
 def next_low_load_window(now: datetime) -> datetime:
     """Return the next 02:00 UTC valley used by the prototype policy."""
+    now = now.astimezone(timezone.utc)
     candidate = now.replace(hour=2, minute=0, second=0, microsecond=0)
     if candidate <= now:
         candidate += timedelta(days=1)
@@ -149,12 +151,16 @@ class Gateway:
 
     async def submit(self, request_text: str, explicit: dict[str, Any]) -> dict[str, Any]:
         now = self.clock.now()
-        contract = await self.intent.extract(request_text, explicit=explicit, now=now)
+        # Extraction diagnostics belong to this submission. Concurrent requests
+        # must not share the mutable response and fallback lists.
+        extractor = copy(self.intent)
+        contract = await extractor.extract(request_text, explicit=explicit, now=now)
+        self.intent = extractor
         estimate = self._work_estimate(request_text)
         decision = self.policy.decide(contract, self._fleet(allow_deferral=True), estimate)
         admission = check_admission(contract, decision)
         task_id = str(uuid4())
-        extraction_accounting = account_responses(self.intent.provider_responses)
+        extraction_accounting = account_responses(extractor.provider_responses)
         record = {
             "id": task_id,
             "request_text": request_text,
@@ -172,7 +178,7 @@ class Gateway:
             "quality": None,
             "metrics": None,
             "accounting": extraction_accounting,
-            "fallback_events": list(self.intent.fallback_events),
+            "fallback_events": list(extractor.fallback_events),
         }
         self._records[task_id] = record
         if admission.admitted:
@@ -196,6 +202,20 @@ class Gateway:
 
     async def tick(self) -> list[ScheduledTask]:
         dispatched = self.scheduler.dispatch_ready()
+        # Dispatch may reject a replanned task before reserving any capacity.
+        for task_id, record in self._records.items():
+            scheduled = self.scheduler.get(task_id)
+            if scheduled is not None and scheduled.state == "rejected" and record["status"] != "rejected":
+                record["status"] = TaskStatus.REJECTED.value
+                record["decision"] = scheduled.decision
+                admission = self.scheduler.admit(scheduled)
+                record["admission"] = admission.model_copy(update={
+                    "admitted": False, "reason": scheduled.transitions[-1]["reason"],
+                })
+                record["decision_history"].append(
+                    {"phase": "dispatch-rejected", "at": self.clock.now(), "decision": scheduled.decision}
+                )
+                self._persist(task_id, "rejected", {"reason": scheduled.transitions[-1]["reason"]})
         for scheduled in dispatched:
             record = self._records[scheduled.task_id]
             record["status"] = TaskStatus.RUNNING.value
@@ -273,12 +293,13 @@ class Gateway:
             result = await self.run_dispatched(scheduled)
             self.finalize_dispatched(scheduled, result)
         except Exception as exc:
+            self.scheduler.fail(scheduled.task_id, reason=str(exc))
             record["status"] = TaskStatus.FAILED.value
             record["error"] = str(exc)
             self._persist(scheduled.task_id, "failed", {"error": str(exc)})
         finally:
             self._running.pop(scheduled.task_id, None)
-            if self.auto_execute:
+            if self.auto_execute and not self._stop.is_set():
                 await self.tick()
 
     async def wait_for_idle(self) -> None:
@@ -291,12 +312,15 @@ class Gateway:
             persisted = self.store.get(task_id)
             if persisted is None:
                 raise KeyError(task_id)
+            persisted["events"] = self.store.events(task_id)
             return persisted
         record = dict(self._records[task_id])
         scheduled = self.scheduler.get(task_id)
         if scheduled is not None:
             record["status"] = scheduled.state if scheduled.state != "in-flight" else "running"
             record["effective_priority"] = scheduled.priority_class
+            record["contract"] = scheduled.contract
+            record["decision"] = scheduled.decision
             record["transitions"] = scheduled.transitions
         record["events"] = self.store.events(task_id)
         return jsonable_encoder(record)
@@ -335,6 +359,7 @@ class Gateway:
     async def update_deadline(self, task_id: str, deadline: datetime) -> dict[str, Any]:
         if task_id not in self._records:
             raise KeyError(task_id)
+        self._require_active(task_id)
         scheduled = self.scheduler.update_deadline(task_id, deadline)
         if scheduled.state == "queued":
             scheduled = self._replan(
@@ -351,6 +376,7 @@ class Gateway:
     async def nudge(self, task_id: str, message: str) -> dict[str, Any]:
         if task_id not in self._records:
             raise KeyError(task_id)
+        self._require_active(task_id)
         scheduled = self.scheduler.nudge(task_id)
         if scheduled.state == "queued":
             scheduled = self._replan(
@@ -374,13 +400,18 @@ class Gateway:
             await self.tick()
         return self.get(task_id)
 
+    def _require_active(self, task_id: str) -> None:
+        scheduled = self.scheduler.get(task_id)
+        if scheduled is None or scheduled.state not in {"queued", "in-flight"}:
+            raise ValueError("only queued or running tasks can be changed")
+
     def _persist(self, task_id: str, event: str, details: dict[str, Any]) -> None:
         if task_id in self._records:
-            self.store.put(
-                task_id,
-                str(self._records[task_id]["status"]),
-                jsonable_encoder(self._records[task_id]),
-            )
+            # Persist the same scheduler state exposed by GET, including
+            # promotions and terminal transitions, for inspection after restart.
+            snapshot = self.get(task_id)
+            snapshot.pop("events", None)
+            self.store.put(task_id, snapshot["status"], snapshot)
         self.store.event(task_id, event, jsonable_encoder(details))
 
     async def close(self) -> None:

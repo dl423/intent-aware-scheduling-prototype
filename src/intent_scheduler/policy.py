@@ -37,11 +37,8 @@ class ModelSpec:
     output_usd_per_million: Decimal
 
 
-# Provider identifiers and list prices verified 2026-07-12 against:
-# https://developers.openai.com/api/docs/models/gpt-5.6-luna
-# https://developers.openai.com/api/docs/models/gpt-5.6-terra
-# Prices are USD per million input/output tokens. The higher tier is
-# deliberately absent from this paper companion.
+# Fixed model labels and rates for the paper experiment. Prices are USD
+# per million input/output tokens.
 MODEL_LADDER: dict[ModelTier, ModelSpec] = {
     ModelTier.LUNA: ModelSpec(ModelTier.LUNA, "gpt-5.6-luna", Decimal("1.00"), Decimal("6.00")),
     ModelTier.TERRA: ModelSpec(ModelTier.TERRA, "gpt-5.6-terra", Decimal("2.50"), Decimal("15.00")),
@@ -94,7 +91,7 @@ def estimate_cost(
     *,
     parallel_drafts: int = 1,
 ) -> Decimal:
-    """Conservatively estimate request cost for admission control.
+    """Estimate execution cost for admission using fixed token assumptions.
 
     A self-check is modeled as two equivalent calls. Parallel execution uses
     N drafts and one judge. This is intentionally simple and auditable.

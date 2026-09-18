@@ -2,11 +2,10 @@ from __future__ import annotations
 
 from contextlib import asynccontextmanager
 import asyncio
-from datetime import datetime
 from typing import Any
 
 from fastapi import FastAPI, HTTPException, Request
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field
 
 from .gateway import Gateway
 from .models import AttentionProfile, QualityFloor
@@ -18,7 +17,7 @@ class TaskSubmission(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     request_text: str = Field(min_length=1, description="The user's task request")
-    deadline: datetime | None = Field(
+    deadline: AwareDatetime | None = Field(
         default=None, description="Timezone-aware absolute completion deadline"
     )
     interactive: bool | None = Field(
@@ -39,7 +38,7 @@ class DeadlineUpdate(BaseModel):
     """Replacement deadline treated as new explicit intent."""
 
     model_config = ConfigDict(extra="forbid")
-    deadline: datetime = Field(description="Timezone-aware absolute completion deadline")
+    deadline: AwareDatetime = Field(description="Timezone-aware absolute completion deadline")
 
 
 class Nudge(BaseModel):
@@ -113,6 +112,8 @@ async def change_deadline(task_id: str, payload: DeadlineUpdate, request: Reques
         return await _gateway(request).update_deadline(task_id, payload.deadline)
     except KeyError as exc:
         raise HTTPException(404, "task not found") from exc
+    except ValueError as exc:
+        raise HTTPException(409, str(exc)) from exc
 
 
 @app.post("/tasks/{task_id}/nudge", summary="Reveal that a human is blocked")
@@ -121,3 +122,5 @@ async def nudge_task(task_id: str, payload: Nudge, request: Request) -> dict[str
         return await _gateway(request).nudge(task_id, payload.message)
     except KeyError as exc:
         raise HTTPException(404, "task not found") from exc
+    except ValueError as exc:
+        raise HTTPException(409, str(exc)) from exc

@@ -135,7 +135,7 @@ class Scheduler:
         supplied = (
             reservations
             if reservations is not None
-            else {INTERACTIVE: 1, STANDARD: 1, DEFERRED_BATCH: 0}
+            else {INTERACTIVE: 1, STANDARD: int(capacity > 1), DEFERRED_BATCH: 0}
         )
         self.reservations = {name: 0 for name in PRIORITY_ORDER}
         for name, amount in supplied.items():
@@ -448,39 +448,46 @@ class Scheduler:
             return task
 
     def next_task(self) -> ScheduledTask | None:
-        """Reserve one capacity slot and return the next runnable task."""
+        """Reserve the task's peak call capacity and return the next runnable task."""
 
         with self._lock:
             if self.enable_escalation:
                 self.escalate()
             now = self.clock.now()
             for class_name in PRIORITY_ORDER:
-                if not self._has_ready(class_name, now):
-                    continue
-                task = self._pop_ready(class_name, now)
-                if task is None:
-                    continue
-                prior_decision = task.decision
-                if self.decision_hook is not None:
-                    task.decision = self.decision_hook(task)
-                if not self._can_use_slot(class_name, now, task.capacity_units):
-                    task.decision = prior_decision
-                    self._push(task)
-                    continue
-                task.state = "in-flight"
-                task.started_at = now
-                if self.decision_hook is not None:
-                    task.transitions.append(
-                        {
-                            "at": now,
-                            "event": "dispatch-redecision",
-                            "before": prior_decision,
-                            "after": task.decision,
-                        }
-                    )
-                task.transitions.append({"at": now, "event": "dispatched", "class": class_name})
-                self._in_flight[task.task_id] = task
-                return task
+                while self._has_ready(class_name, now):
+                    task = self._pop_ready(class_name, now)
+                    if task is None:
+                        break
+                    prior_decision = task.decision
+                    if self.decision_hook is not None:
+                        task.decision = self.decision_hook(task)
+                    admission = self.admit(task)
+                    if not admission.admitted or task.capacity_units > self.capacity:
+                        reason = admission.reason if not admission.admitted else (
+                            f"task requires {task.capacity_units} slots but capacity is {self.capacity}"
+                        )
+                        task.state = "rejected"
+                        task.transitions.append({"at": now, "event": "rejected", "reason": reason})
+                        continue
+                    if not self._can_use_slot(class_name, now, task.capacity_units):
+                        task.decision = prior_decision
+                        self._push(task)
+                        break
+                    task.state = "in-flight"
+                    task.started_at = now
+                    if self.decision_hook is not None:
+                        task.transitions.append(
+                            {
+                                "at": now,
+                                "event": "dispatch-redecision",
+                                "before": prior_decision,
+                                "after": task.decision,
+                            }
+                        )
+                    task.transitions.append({"at": now, "event": "dispatched", "class": class_name})
+                    self._in_flight[task.task_id] = task
+                    return task
             return None
 
     dispatch = next_task
@@ -514,6 +521,15 @@ class Scheduler:
             return task
 
     release = complete
+
+    def fail(self, task_id: str, *, reason: str) -> ScheduledTask:
+        """Release reserved slots and retain an inspectable failure transition."""
+        with self._lock:
+            task = self._in_flight.pop(task_id)
+            task.state = "failed"
+            task.completed_at = self.clock.now()
+            task.transitions.append({"at": task.completed_at, "event": "failed", "reason": reason})
+            return task
 
     def cancel(self, task_id: str) -> bool:
         """Cancel queued work. Running provider calls are not preempted."""
